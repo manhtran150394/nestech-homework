@@ -14,31 +14,28 @@
 
 <body>
     <h1>List of Dates that have temparature above 20</h1>
+    <input type="button" value="Get data" onclick="loadDoc()">
     <ul id='result'></ul>
 </body>
 <script>
     var api = 'https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m';
 
-    fetch(api)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (gets) {
-            console.log(gets);
-            const a = [];
-            let htmls = gets.hourly.temperature_2m.map(function (e, index) {
+    function loadDoc() {
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+            const res_object = JSON.parse(this.responseText);
+            res_object.hourly.temperature_2m.map(function (e, index) {
                 if (e > 20) {
                     document.getElementById("result").innerHTML += 
-                        `<li>Date: ${gets.hourly.time[index].substr(0, 10)} 
-                        - Time: ${gets.hourly.time[index].substr(11, 5).replace(':','h') + `'`} 
+                        `<li>Date: ${res_object.hourly.time[index].substr(0, 10)} 
+                        - Time: ${res_object.hourly.time[index].substr(11, 5).replace(':','h') + `'`} 
                         - Temparature: ${e}</li>`;
                 }
             });
-        })
-
-        .catch(function (err) {
-            console.log(err);
-        })
+        }
+        xhttp.open("GET", api, true);
+        xhttp.send();
+    }
 
 </script>
 
